@@ -1,0 +1,124 @@
+1) Running Sum of 1d Array
+
+	n=len(nums)
+        s=0
+        a=[]
+        for i in range(n):
+           s+=nums[i]
+           a.append(s)
+        return a
+
+2)Range Sum Query
+
+   def __init__(self, nums: List[int]):
+        self.n=len(nums)
+        self.tree=[0]*4*self.n
+        self.build(0,0,self.n-1,nums)
+    
+    def build(self,node,start,end,nums):
+        if start==end:
+            self.tree[node]=nums[start]
+            return
+        mid=(start+end)//2
+        self.build(2*node+1,start,mid,nums)
+        self.build(2*node+2,mid+1,end,nums)
+        self.tree[node]=self.tree[2*node+1]+self.tree[2*node+2]
+    
+
+    def sumRange(self, left: int, right: int) -> int:
+        return self.query(0,0,self.n-1,left,right)
+
+    def query(self, node, start, end, left, right):
+        #No overlap
+        if start > right  or end<left:
+            return 0
+        
+        #complete overlap
+        if left<=start and end <=right:
+            return self.tree[node]
+
+        #partial overlap
+        mid=(start+end)//2
+        leftValue=self.query(2*node+1,start,mid,left,right)
+        rightValue=self.query(2*node+2,mid+1,end,left,right)
+        return leftValue+rightValue
+
+3)Find the Middle Index in Array
+
+	total=sum(nums)
+        leftsum=0
+        for i, v in enumerate(nums):
+            if leftsum==total-leftsum-v:
+                return i
+
+            leftsum+=v
+        return -1
+
+4)Find Pivot Index
+	total=sum(nums)
+        leftsum=0
+        for i, v in enumerate(nums):
+            if leftsum==total-leftsum-v:
+                return i
+
+            leftsum+=v
+        return -1
+
+5)Subarray Sum Equals K
+	c = 0
+        for start in range(len(nums)):
+            curr_sum = 0
+            for end in range(start, len(nums)):
+                curr_sum += nums[end]
+                if curr_sum == k:
+                    c += 1
+        return c
+
+6) Binary Search
+def search(self, nums, target): 
+       low=0
+       high=len(nums)-1
+    
+       while low<=high:
+        mid=(low+high)//2
+        if nums[mid]==target:
+            return mid
+        elif target>nums[mid]:
+            low=mid+1
+        else:
+            high=mid-1
+       return -1
+
+7) Sqrt(x)
+def mySqrt(self, x):
+        return int(x**0.5)
+
+
+8) Search Insert Position
+def searchInsert(self, nums, target):
+        low=0
+        high=len(nums)-1
+        while low<=high:
+            mid=(low+high)//2
+
+            if nums[mid]==target:
+                return mid
+            elif nums[mid]<target:
+                low=mid+1
+            else:
+                high=mid-1
+        return low
+
+9)Median of Two Sorted Arrays
+	nums = sorted(nums1 + nums2)
+        n = len(nums)
+        
+        if n % 2 == 0:
+            return (nums[n//2 - 1] + nums[n//2]) / 2
+        else:
+            return nums[n//2]
+
+10)Rotate Array
+def rotate(self, nums: List[int], k: int) -> None:
+        k=k%len(nums)
+        nums[:]=nums[-k:]+nums[:-k]
