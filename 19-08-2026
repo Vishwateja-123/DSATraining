@@ -1,0 +1,24 @@
+1006C - Three Parts of the Array
+
+n=int(input())
+arr=list(map(int,input().split()))
+s1=0
+s2=0
+s=0
+
+l=0
+r=n-1
+
+while l<=r:
+    
+    if s1>s2:
+        s2+=arr[r]
+        r-=1
+    else:
+        s1+=arr[l]
+        l+=1
+        
+    if s1 == s2 :
+        s= max(s,s2)
+    
+print(s)
