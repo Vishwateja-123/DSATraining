@@ -1,0 +1,33 @@
+1. select emp_name, department, salary, (row_number() over(order by salary desc)) as sno from employees;
+
+2. select emp_name, department, salary, (rank() over(order by salary desc)) as sno from employees;
+
+3. select emp_name, department, salary, (dense_rank() over(order by salary desc)) as sno from employees;
+
+4. select emp_name, department, salary, (row_number() over(partition by department order by salary desc)) as sno from employees;
+
+5. select emp_name, department, salary, (rank() over(partition by department order by salary desc)) as sno from employees;
+
+6. select * from (
+       select emp_name, department, salary, (dense_rank() over(partition by department order by salary desc)) as sno 
+       from employees
+   ) as x 
+   where x.sno <= 2;
+
+7. select emp_name, department, salary, (first_value(emp_name) over(partition by department order by salary desc)) as high_paid_name 
+   from employees;
+
+8. select emp_name, department, salary, (first_value(emp_name) over(partition by department order by salary)) as least_paid_name 
+   from employees;
+
+9. select emp_name, department, salary, 
+       (first_value(salary) over(partition by department order by salary desc)) as high_paid_salary,
+       (last_value(salary) over(partition by department order by salary desc)) as low_paid_salary 
+   from employees;
+
+10. select x.* 
+    from (
+        select employees.*, dense_rank() over(order by salary desc) as sec_salary 
+        from employees
+    ) as x 
+    where x.sec_salary = 2;
