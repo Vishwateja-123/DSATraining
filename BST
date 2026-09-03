@@ -1,0 +1,62 @@
+#  Delete Node in BST
+def minNode(n):
+    cur = n
+    while cur.left:
+        cur = cur.left
+    return cur
+
+def delNode(rt, x):
+    if not rt: return rt
+    if x < rt.val:
+        rt.left = delNode(rt.left, x)
+    elif x > rt.val:
+        rt.right = delNode(rt.right, x)
+    else:
+        if not rt.left: return rt.right
+        if not rt.right: return rt.left
+        tmp = minNode(rt.right)
+        rt.val = tmp.val
+        rt.right = delNode(rt.right, tmp.val)
+    return rt
+
+
+#  Check if BST
+def isBST(rt):
+    arr = []
+    def ino(n):
+        if not n: return
+        ino(n.left); arr.append(n.val); ino(n.right)
+    ino(rt)
+    return arr == sorted(arr)
+
+
+#  Kth Smallest in BST
+def kthSmall(rt, k):
+    arr = []
+    def ino(n):
+        if not n: return
+        ino(n.left); arr.append(n.val); ino(n.right)
+    ino(rt)
+    return arr[k-1] if k <= len(arr) else None
+
+
+#  Kth Largest in BST
+def kthLarge(rt, k):
+    arr = []
+    def ino(n):
+        if not n: return
+        ino(n.left); arr.append(n.val); ino(n.right)
+    ino(rt)
+    return arr[-k] if k <= len(arr) else None
+
+
+#  Balanced BST Check
+def ht(n):
+    if n is None: return 0
+    return 1 + max(ht(n.left), ht(n.right))
+
+def isBal(rt):
+    if rt is None: return True
+    lh, rh = ht(rt.left), ht(rt.right)
+    if abs(lh - rh) > 1: return False
+    return isBal(rt.left) and isBal(rt.right)
