@@ -1,0 +1,715 @@
+
+1. import math
+
+tree = []
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = arr[st]
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = math.gcd(tree[2*ind+1], tree[2*ind+2])
+
+def update(ind, st, ed, arr, index, val):
+    if st == ed:
+        tree[ind] = val
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, arr, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, arr, index, val)
+
+    tree[ind] = math.gcd(tree[2*ind+1], tree[2*ind+2])
+
+def find(ind, st, ed, arr, i, j):
+    if i > ed or j < st:
+        return 0
+
+    if i <= st and ed <= j:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+    left = find(2*ind+1, st, mid, arr, i, j)
+    right = find(2*ind+2, mid+1, ed, arr, i, j)
+
+    return math.gcd(left, right)
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [0] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, arr, index, val)
+
+    else:
+        l, r = map(int, input().split())
+        print(find(0, 0, n-1, arr, l, r))
+
+    q -= 1 
+
+
+#########################################################################
+2. tree = []
+mod = 1000000007
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = arr[st]
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = (tree[2*ind+1] * tree[2*ind+2]) % mod
+
+def update(ind, st, ed, arr, index, val):
+    if st == ed:
+        tree[ind] = val
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, arr, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, arr, index, val)
+
+    tree[ind] = (tree[2*ind+1] * tree[2*ind+2]) % mod
+
+def rangePro(ind, st, ed, arr, i, j):
+    if i > ed or j < st:
+        return 1
+
+    if i <= st and ed <= j:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+    left = rangePro(2*ind+1, st, mid, arr, i, j)
+    right = rangePro(2*ind+2, mid+1, ed, arr, i, j)
+
+    return (left * right) % mod
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [1] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, arr, index, val)
+
+    else:
+        l, r = map(int, input().split())
+        print(rangePro(0, 0, n-1, arr, l, r))
+
+    q -= 1
+
+#######################################################
+3.tree = []
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = arr[st]
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = tree[2*ind+1] | tree[2*ind+2]
+
+def update(ind, st, ed, arr, index, val):
+    if st == ed:
+        tree[ind] = val
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, arr, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, arr, index, val)
+
+    tree[ind] = tree[2*ind+1] | tree[2*ind+2]
+
+def rangeBit(ind, st, ed, arr, i, j):
+    if i > ed or j < st:
+        return 0
+
+    if i <= st and ed <= j:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+    left = rangeBit(2*ind+1, st, mid, arr, i, j)
+    right = rangeBit(2*ind+2, mid+1, ed, arr, i, j)
+
+    return left | right
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [0] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, arr, index, val)
+
+    else:
+        l, r = map(int, input().split())
+        print(rangeBit(0, 0, n-1, arr, l, r))
+
+    q -= 1
+########################################################################
+4.tree = []
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = arr[st]
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = tree[2*ind+1] + tree[2*ind+2]
+
+def update(ind, st, ed, index, value):
+    if st == ed:
+        tree[ind] = value
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, index, value)
+    else:
+        update(2*ind+2, mid+1, ed, index, value)
+
+    tree[ind] = tree[2*ind+1] + tree[2*ind+2]
+
+def findKthOne(ind, st, ed, k):
+    if st == ed:
+        return st
+
+    mid = (st + ed) // 2
+    left = tree[2*ind+1]
+
+    if k <= left:
+        return findKthOne(2*ind+1, st, mid, k)
+
+    return findKthOne(2*ind+2, mid+1, ed, k-left)
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [0] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, value = map(int, input().split())
+        arr[index] = value
+        update(0, 0, n-1, index, value)
+
+    else:
+        k = int(input())
+
+        if tree[0] < k:
+            print(-1)
+        else:
+            print(findKthOne(0, 0, n-1, k))
+
+    q -= 1
+    ##################################################################
+5.tree = []
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = arr[st]
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = max(tree[2*ind+1], tree[2*ind+2])
+
+def update(ind, st, ed, index, val):
+    if st == ed:
+        tree[ind] = val
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, index, val)
+
+    tree[ind] = max(tree[2*ind+1], tree[2*ind+2])
+
+def find(ind, st, ed, l, r, x):
+    if ed < l or st > r or tree[ind] < x:
+        return -1
+
+    if st == ed:
+        return st
+
+    mid = (st + ed) // 2
+
+    left = find(2*ind+1, st, mid, l, r, x)
+
+    if left != -1:
+        return left
+
+    return find(2*ind+2, mid+1, ed, l, r, x)
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [0] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, index, val)
+
+    else:
+        l, r, x = map(int, input().split())
+        print(find(0, 0, n-1, l, r, x))
+
+    q -= 1
+
+
+################################################################
+6.tree = []
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = 1 if arr[st] == 0 else 0
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = tree[2*ind+1] + tree[2*ind+2]
+
+def update(ind, st, ed, index, val):
+    if st == ed:
+        tree[ind] = 1 if val == 0 else 0
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, index, val)
+
+    tree[ind] = tree[2*ind+1] + tree[2*ind+2]
+
+def find(ind, st, ed, l, r):
+    if l > ed or r < st:
+        return 0
+
+    if l <= st and ed <= r:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+
+    left = find(2*ind+1, st, mid, l, r)
+    right = find(2*ind+2, mid+1, ed, l, r)
+
+    return left + right
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [0] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, index, val)
+
+    else:
+        l, r = map(int, input().split())
+        print(find(0, 0, n-1, l, r))
+
+    q -= 1
+
+
+#####################################################################
+7.tree = []
+
+class Node:
+    def __init__(self, prefix, suffix, best, length):
+        self.prefix = prefix
+        self.suffix = suffix
+        self.best = best
+        self.length = length
+
+def merge(a, b):
+    if a is None:
+        return b
+    if b is None:
+        return a
+
+    prefix = a.prefix
+    suffix = b.suffix
+
+    if a.prefix == a.length:
+        prefix = a.length + b.prefix
+
+    if b.suffix == b.length:
+        suffix = b.length + a.suffix
+
+    best = max(a.best, b.best, a.suffix + b.prefix)
+
+    return Node(prefix, suffix, best, a.length + b.length)
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = Node(arr[st], arr[st], arr[st], 1)
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = merge(tree[2*ind+1], tree[2*ind+2])
+
+def update(ind, st, ed, index, val):
+    if st == ed:
+        tree[ind] = Node(val, val, val, 1)
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, index, val)
+
+    tree[ind] = merge(tree[2*ind+1], tree[2*ind+2])
+
+def find(ind, st, ed, l, r):
+    if l > ed or r < st:
+        return None
+
+    if l <= st and ed <= r:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+
+    left = find(2*ind+1, st, mid, l, r)
+    right = find(2*ind+2, mid+1, ed, l, r)
+
+    return merge(left, right)
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [None] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, index, val)
+
+    else:
+        l, r = map(int, input().split())
+        print(find(0, 0, n-1, l, r).best)
+
+    q -= 1
+
+
+    ####################################################################3
+8.tree = []
+
+class Node:
+    def __init__(self, max1, max2):
+        self.max1 = max1
+        self.max2 = max2
+
+def merge(a, b):
+    max1 = max(a.max1, b.max1)
+    max2 = max(min(a.max1, b.max1), a.max2, b.max2)
+
+    return Node(max1, max2)
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = Node(arr[st], float('-inf'))
+        return
+
+    mid = (st + ed) // 2
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = merge(tree[2*ind+1], tree[2*ind+2])
+
+def update(ind, st, ed, index, val):
+    if st == ed:
+        tree[ind] = Node(val, float('-inf'))
+        return
+
+    mid = (st + ed) // 2
+
+    if index <= mid:
+        update(2*ind+1, st, mid, index, val)
+    else:
+        update(2*ind+2, mid+1, ed, index, val)
+
+    tree[ind] = merge(tree[2*ind+1], tree[2*ind+2])
+
+def find(ind, st, ed, l, r):
+    if l > ed or r < st:
+        return None
+
+    if l <= st and ed <= r:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+
+    left = find(2*ind+1, st, mid, l, r)
+    right = find(2*ind+2, mid+1, ed, l, r)
+
+    if left is None:
+        return right
+    if right is None:
+        return left
+
+    return merge(left, right)
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [None] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    type = int(input())
+
+    if type == 1:
+        index, val = map(int, input().split())
+        arr[index] = val
+        update(0, 0, n-1, index, val)
+
+    else:
+        l, r = map(int, input().split())
+        ans = find(0, 0, n-1, l, r)
+        print(ans.max1 + ans.max2)
+
+    q -= 1
+#######################################################
+9.tree = []
+
+class Node:
+    def __init__(self, leftVal, rightVal, prefix, suffix, best):
+        self.leftVal = leftVal
+        self.rightVal = rightVal
+        self.prefix = prefix
+        self.suffix = suffix
+        self.best = best
+
+def merge(a, b):
+    if a is None:
+        return b
+    if b is None:
+        return a
+
+    prefix = a.prefix
+    suffix = b.suffix
+
+    if a.leftVal == b.leftVal:
+        prefix = a.prefix + b.prefix
+
+    if a.rightVal == b.rightVal:
+        suffix = a.suffix + b.suffix
+
+    best = max(a.best, b.best)
+
+    if a.rightVal == b.leftVal:
+        best = max(best, a.suffix + b.prefix)
+
+    return Node(
+        a.leftVal,
+        b.rightVal,
+        prefix,
+        suffix,
+        best
+    )
+
+def build(ind, st, ed, arr):
+    if st == ed:
+        tree[ind] = Node(arr[st], arr[st], 1, 1, 1)
+        return
+
+    mid = (st + ed) // 2
+
+    build(2*ind+1, st, mid, arr)
+    build(2*ind+2, mid+1, ed, arr)
+
+    tree[ind] = merge(tree[2*ind+1], tree[2*ind+2])
+
+def find(ind, st, ed, l, r):
+    if l > ed or r < st:
+        return None
+
+    if l <= st and ed <= r:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+
+    left = find(2*ind+1, st, mid, l, r)
+    right = find(2*ind+2, mid+1, ed, l, r)
+
+    return merge(left, right)
+
+
+n = int(input())
+arr = list(map(int, input().split()))
+tree = [None] * (4*n)
+
+build(0, 0, n-1, arr)
+
+q = int(input())
+
+while q:
+    l, r = map(int, input().split())
+    print(find(0, 0, n-1, l, r).best)
+    q -= 1
+
+
+####################################################################
+10.tree = []
+
+class Node:
+    def __init__(self, open, close, pairs):
+        self.open = open
+        self.close = close
+        self.pairs = pairs
+
+def merge(a, b):
+    if a is None:
+        return b
+    if b is None:
+        return a
+
+    x = min(a.open, b.close)
+
+    return Node(
+        a.open + b.open - x,
+        a.close + b.close - x,
+        a.pairs + b.pairs + x
+    )
+
+def build(ind, st, ed, s):
+    if st == ed:
+        if s[st] == '(':
+            tree[ind] = Node(1, 0, 0)
+        else:
+            tree[ind] = Node(0, 1, 0)
+        return
+
+    mid = (st + ed) // 2
+
+    build(2*ind+1, st, mid, s)
+    build(2*ind+2, mid+1, ed, s)
+
+    tree[ind] = merge(tree[2*ind+1], tree[2*ind+2])
+
+def find(ind, st, ed, l, r):
+    if l > ed or r < st:
+        return None
+
+    if l <= st and ed <= r:
+        return tree[ind]
+
+    mid = (st + ed) // 2
+
+    left = find(2*ind+1, st, mid, l, r)
+    right = find(2*ind+2, mid+1, ed, l, r)
+
+    return merge(left, right)
+
+
+s = input().strip()
+n = len(s)
+
+tree = [None] * (4*n)
+
+build(0, 0, n-1, s)
+
+q = int(input())
+
+while q:
+    l, r = map(int, input().split())
+    ans = find(0, 0, n-1, l, r)
+    print(ans.pairs * 2)
+    q -= 1
