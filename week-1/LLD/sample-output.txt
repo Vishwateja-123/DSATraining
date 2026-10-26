@@ -1,0 +1,10 @@
+Allocated floors: 1 1 2
+Car fee for 3 hours: INR 60
+Tiered car fee for 4 hours: INR 65
+Duplicate vehicle: rejected
+Full truck slots: rejected
+Invalid ticket: rejected
+Repeated exit: rejected
+Invalid vehicle type: rejected
+Duplicate floor: rejected
+Occupancy: {1: {'BIKE': {'total': 1, 'occupied': 1, 'free': 0}, 'CAR': {'total': 1, 'occupied': 0, 'free': 1}, 'TRUCK': {'total': 0, 'occupied': 0, 'free': 0}}, 2: {'BIKE': {'total': 0, 'occupied': 0, 'free': 0}, 'CAR': {'total': 1, 'occupied': 0, 'free': 1}, 'TRUCK': {'total': 1, 'occupied': 1, 'free': 0}}}
