@@ -1,17 +1,19 @@
-# Vishwateja — Internship Tasks and DSA Training
+# DSA Training
 
-Start with the **[week-1 submission](week-1/README.md)**: ten DSA problems, ten PostgreSQL queries, a parking-lot LLD and a link to the separate HLD repository.
+My internship assignments and practice notes.
 
-| Material | Location |
-| --- | --- |
-| DSA solutions, explanations and tests | [week-1/DSA](week-1/DSA/README.md) |
-| PostgreSQL queries, schema, data and tests | [week-1/SQL](week-1/SQL/README.md) |
-| Parking-lot application, demo, UML and tests | [week-1/LLD](week-1/LLD/README.md) |
-| Coding assessment platform HLD | [HLD repository](https://github.com/Vishwateja-123/HLD) |
-| Earlier practice notes, unchanged | [training](training/README.md) |
-| Review and commit process | [CONTRIBUTING.md](CONTRIBUTING.md) |
+## Week 1
 
-Python 3.10+ is required. DSA and LLD use only the standard library. SQL uses PostgreSQL and the `psql` command-line client.
+- [DSA](week-1/DSA/README.md) — 10 Python problems
+- [SQL](week-1/SQL/README.md) — 10 PostgreSQL queries
+- [LLD](week-1/LLD/README.md) — Parking lot design and code
+- [HLD](https://github.com/Vishwateja-123/HLD/tree/main/week-1/HLD) — Coding assessment platform design
+
+See the [Week 1 overview](week-1/README.md) for details. Older practice files are in [training](training/README.md).
+
+## Run locally
+
+Use Python 3.10 or newer. Run these commands from the repository folder:
 
 ```bash
 python3 -m unittest discover -s week-1/DSA/tests -v
@@ -19,4 +21,4 @@ python3 -m unittest discover -s week-1/LLD/tests -v
 python3 week-1/LLD/demo.py
 ```
 
-The new solutions were prepared with AI assistance and are separate from the older practice notes. Read the explanations and run the demonstrations before submitting. The included material covers the documented Week-1 task scope; instructor acceptance is determined separately.
+For SQL setup and queries, follow the [SQL README](week-1/SQL/README.md).
