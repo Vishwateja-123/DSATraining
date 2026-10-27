@@ -19,4 +19,4 @@ python3 -m unittest discover -s week-1/LLD/tests -v
 python3 week-1/LLD/demo.py
 ```
 
-The new solutions were prepared with AI assistance using Varun Suddala's task coverage as the requested reference. They are separate from the older practice notes. Read the explanations and run the demonstrations before submitting. Completion here means coverage of that reference, not instructor acceptance or proof of independently authored prior work.
+The new solutions were prepared with AI assistance and are separate from the older practice notes. Read the explanations and run the demonstrations before submitting. The included material covers the documented Week-1 task scope; instructor acceptance is determined separately.

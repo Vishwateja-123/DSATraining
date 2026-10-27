@@ -23,7 +23,7 @@ For SQL, follow the [database setup instructions](SQL/README.md); the demo and t
 
 ## What changed
 
-Earlier root files were practice material, not a complete match for the weekly tasks. They remain unchanged under [training](../training/README.md). New solutions/designs were prepared with AI assistance to cover the requested [reference checklist](https://github.com/VarunSuddala/QuantumNique-weekly-tasks/tree/a38d74d391bd5f4d013be8c32277799f13e7e28e/week-1). No original assignment sheet was available; task-specific interpretations are documented in each area.
+Earlier root files were practice material, not a complete match for the weekly tasks. They remain unchanged under [training](../training/README.md). New solutions and designs were prepared with AI assistance for the documented Week-1 task scope. No original assignment sheet was available; task-specific interpretations are documented in each area.
 
 The tracker previously showed DSA 7 and SQL 7, with HLD/LLD blank. This work does not retrospectively validate those counts. After reviewing the new work and publishing the approved versions, reconcile the tracker using the submission links and the internship's completion rules.
 

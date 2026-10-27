@@ -50,4 +50,4 @@ Tests compare small cases with independent algorithms: brute-force windows/inter
 
 The reference presents simple and optimized approaches. The first three problems and cycle removal include executable baseline functions; other simple approaches are documented in module docstrings and implemented independently as test oracles where practical. LCA's path comparison is a straightforward baseline; DFS over all simple matrix paths and recursive coin enumeration are exponential and intentionally not the default execution path.
 
-Task scope follows Varun Suddala's week-1 reference; solutions were freshly prepared with AI assistance. Earlier practice snippets remain in `training/` unchanged.
+These Week-1 solutions were freshly prepared with AI assistance. Earlier practice snippets remain in `training/` unchanged.

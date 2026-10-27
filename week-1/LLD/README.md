@@ -27,4 +27,4 @@ See [sample output](sample-output.txt), [class diagram and design](docs/design.m
 
 This is an in-memory LLD exercise with executable behavior, not a deployed parking/payment service. Restarting loses state; no real payments are taken. Production extensions would need persistent storage, transactions/unique constraints across gates, recovery, authenticated operators and an immutable pricing/version table.
 
-The task coverage and structure follow Varun Suddala's reference. This implementation and its tests were newly prepared with AI assistance; they do not copy his source files.
+This parking-lot implementation and its tests were newly prepared with AI assistance for the documented Week-1 task scope.

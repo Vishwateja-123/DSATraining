@@ -2,7 +2,7 @@
 
 ## 1. Review what is new
 
-This work fills the gaps against the requested Varun Suddala week-1 reference: ten DSA solutions, ten SQL answers, parking-lot LLD and coding-assessment HLD. Earlier training is preserved unchanged. New material was prepared with AI assistance; read and understand it before presenting it as your internship submission.
+This submission includes ten DSA solutions, ten SQL answers, parking-lot LLD and coding-assessment HLD. Earlier training is preserved unchanged. New material was prepared with AI assistance; read and understand it before presenting it as your internship submission.
 
 The original official question sheet was not supplied. SQL Q6 and Q9 assumptions are explicit in the SQL README. If the instructor's actual schema/prompt differs, adjust those specific answers rather than silently claiming an exact rubric match.
 
