@@ -1,4 +1,4 @@
-"""Run with WEEK1_DATABASE_URL set to a PostgreSQL connection string.
+"""Run with standard libpq variables (PGDATABASE/PGSERVICE, PGHOST, PGPORT).
 Each query runs inside a new schema in a transaction rolled back on completion.
 Requires psql on PATH; Python has no third-party dependencies.
 """
@@ -7,29 +7,71 @@ import os
 from pathlib import Path
 import subprocess
 import unittest
+from unittest.mock import patch
 import uuid
 
 ROOT = Path(__file__).parents[1]
-DSN = os.environ.get("WEEK1_DATABASE_URL")
+
+
+
+def run_psql(script):
+    # Use standard libpq environment/service settings and .pgpass credentials.
+    # No connection settings appear in argv or failure messages.
+    env = dict(os.environ, PGCONNECT_TIMEOUT="10")
+    try:
+        result = subprocess.run(["psql", "-X", "-qAt", "-v", "ON_ERROR_STOP=1"],
+                                input=script, text=True, capture_output=True,
+                                env=env, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        raise RuntimeError("Database check could not run; verify local connection settings") from None
+    if result.returncode:
+        raise RuntimeError("Database check failed; verify schema and local connection settings")
+    return result
 
 
 def query(number, seed=True):
-    if not DSN:
-        raise RuntimeError("Set WEEK1_DATABASE_URL before running SQL tests")
+    if not (os.environ.get("PGDATABASE") or os.environ.get("PGSERVICE")):
+        raise RuntimeError("Set PGDATABASE or PGSERVICE before running SQL tests")
     sql = next(ROOT.glob(f"{number:02}_*.sql")).read_text().strip().rstrip(";")
-    script = f"BEGIN; CREATE SCHEMA test_{uuid.uuid4().hex}; SET LOCAL search_path TO test_placeholder;"
-    schema = script.split("CREATE SCHEMA ")[1].split(";")[0]
-    script = script.replace("test_placeholder", schema)
+    schema = f"test_{uuid.uuid4().hex}"
+    script = f"BEGIN; CREATE SCHEMA {schema}; SET LOCAL search_path TO {schema};"
     script += (ROOT / "schema.sql").read_text()
     if seed:
         script += (ROOT / "seed.sql").read_text()
     script += f"\nSELECT COALESCE(json_agg(result), '[]'::json) FROM (\n{sql}\n) result;\nROLLBACK;"
-    result = subprocess.run(["psql", "-X", "-qAt", "-v", "ON_ERROR_STOP=1", "--dbname", DSN],
-                            input=script, text=True, capture_output=True, check=True)
+    result = run_psql(script)
     return json.loads(result.stdout.strip())
 
 
 class SqlTests(unittest.TestCase):
+    def test_connection_failure_does_not_expose_dsn(self):
+        secret = "postgresql://user:example-secret@localhost/db"
+        result = subprocess.CompletedProcess([], 1, "", secret)
+        with patch.dict(os.environ, {"PGPASSWORD": secret}):
+            with patch("subprocess.run", return_value=result) as run:
+                with self.assertRaises(RuntimeError) as error:
+                    run_psql("SELECT 1")
+                self.assertNotIn(secret, str(error.exception))
+                self.assertNotIn(secret, str(run.call_args.args))
+                self.assertEqual(run.call_args.kwargs["env"]["PGPASSWORD"], secret)
+
+    def test_schema_rejects_self_manager(self):
+        schema = "test_" + uuid.uuid4().hex
+        script = f"BEGIN; CREATE SCHEMA {schema}; SET LOCAL search_path TO {schema};"
+        script += (ROOT / "schema.sql").read_text()
+        script += """
+        INSERT INTO departments VALUES (99, 'Test');
+        DO $$ BEGIN
+          BEGIN
+            INSERT INTO employees VALUES (99, 'Test', 99, 1, 99);
+            RAISE EXCEPTION 'self manager was accepted';
+          EXCEPTION WHEN check_violation THEN NULL;
+          END;
+        END $$;
+        ROLLBACK;
+        """
+        run_psql(script)
+
     def test_01_summary_includes_empty_department(self):
         rows = query(1)
         self.assertEqual([(r['dept_id'], r['employee_count'], r['avg_salary'], r['min_salary'], r['max_salary']) for r in rows],

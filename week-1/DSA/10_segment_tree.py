@@ -14,7 +14,7 @@ class SegmentTreeRangeMax:
             self.tree[i] = max(self.tree[2 * i], self.tree[2 * i + 1])
 
     def update(self, index, value):
-        if not 0 <= index < self.n:
+        if type(index) is not int or not 0 <= index < self.n:
             raise IndexError("Update index outside array")
         index += self.size
         self.tree[index] = value
@@ -24,7 +24,7 @@ class SegmentTreeRangeMax:
             index //= 2
 
     def query(self, left, right):
-        if not 0 <= left <= right < self.n:
+        if type(left) is not int or type(right) is not int or not 0 <= left <= right < self.n:
             raise IndexError("Invalid inclusive query range")
         left, right = left + self.size, right + self.size
         result = float("-inf")

@@ -2,6 +2,7 @@
 Sorting: O(n log n) time, O(n) space. Reject reversed/invalid pairs.
 """
 def merge_intervals(intervals):
+    intervals = list(intervals)
     if any(len(pair) != 2 or pair[0] > pair[1] for pair in intervals):
         raise ValueError("Each interval must have start <= end")
     merged = []

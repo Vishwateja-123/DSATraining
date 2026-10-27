@@ -6,7 +6,9 @@ from decimal import Decimal
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parents[1]))
 from parking_lot import ParkingLot, TieredFee, HighestFloor
-from parking_lot.strategies import FeeStrategy
+from parking_lot.strategies import FeeStrategy, HourlyFee, billable_hours
+from parking_lot.models import VehicleType, ParkingSlot
+from zoneinfo import ZoneInfo
 
 
 class ParkingTests(unittest.TestCase):
@@ -66,14 +68,70 @@ class ParkingTests(unittest.TestCase):
 
     def test_failed_fee_preserves_state(self):
         class BrokenFee(FeeStrategy):
+            calls = 0
             def calculate(self, *args):
-                raise ValueError("pricing unavailable")
+                self.calls += 1
+                if self.calls == 1:
+                    raise ValueError("pricing unavailable")
+                return Decimal(20)
         self.lot.set_strategies(pricing=BrokenFee())
         t = self.lot.park("a", "CAR")
         before = self.lot.occupancy()
         with self.assertRaises(ValueError):
             self.lot.unpark(t.ticket_id)
         self.assertEqual(self.lot.occupancy(), before)
+
+        with self.assertRaises(ValueError):
+            self.lot.park("a", "CAR")
+        self.assertEqual(self.lot.unpark(t.ticket_id).fee, Decimal(20))
+        self.assertTrue(self.lot.park("a", "CAR").active)
+
+    def test_dst_elapsed_time_and_order(self):
+        zone = ZoneInfo("America/New_York")
+        start = datetime(2026, 11, 1, 1, 45, tzinfo=zone, fold=0)
+        end = datetime(2026, 11, 1, 1, 15, tzinfo=zone, fold=1)
+        t = self.lot.park("dst", "CAR", start)
+        self.assertEqual(self.lot.unpark(t.ticket_id, end).fee, Decimal(20))
+        self.assertEqual(billable_hours(datetime(2026, 11, 1, 0, 30, tzinfo=zone),
+                                       datetime(2026, 11, 1, 2, 30, tzinfo=zone)), 3)
+        self.assertEqual(billable_hours(datetime(2026, 3, 8, 1, 30, tzinfo=zone),
+                                       datetime(2026, 3, 8, 3, 30, tzinfo=zone)), 1)
+
+    def test_mutable_pricing_is_snapshotted(self):
+        pricing = HourlyFee()
+        self.lot.set_strategies(pricing=pricing)
+        old = self.lot.park("old", "CAR")
+        pricing.RATES[VehicleType.CAR] = Decimal(99)
+        new = self.lot.park("new", "CAR")
+        self.assertEqual(self.lot.unpark(old.ticket_id).fee, Decimal(20))
+        self.assertEqual(self.lot.unpark(new.ticket_id).fee, Decimal(99))
+
+    def test_invalid_allocator_cannot_corrupt_state(self):
+        class BadAllocator:
+            def choose(self, available):
+                return ParkingSlot(1, "CAR", VehicleType.CAR)
+        old = self.lot.park("old", "CAR")
+        before = self.lot.occupancy()
+        self.lot.set_strategies(allocation=BadAllocator())
+        with self.assertRaises(ValueError):
+            self.lot.park("new", "CAR")
+        self.assertEqual(self.lot.occupancy(), before)
+        self.assertEqual(self.lot.unpark(old.ticket_id).fee, Decimal(20))
+
+    def test_falsey_strategies_and_boolean_floor(self):
+        class FalseHigh(HighestFloor):
+            def __bool__(self): return False
+        class FalseFee(HourlyFee):
+            def __bool__(self): return False
+            def calculate(self, *args): return Decimal(7)
+        lot = ParkingLot("Falsey", allocation=FalseHigh(), pricing=FalseFee(), clock=lambda: self.start)
+        with self.assertRaises(ValueError): lot.add_floor(True)
+        for floor in (1, 2):
+            lot.add_floor(floor)
+            lot.add_slot(floor, "C", "CAR")
+        t = lot.park("a", "CAR")
+        self.assertEqual(t.floor, 2)
+        self.assertEqual(lot.unpark(t.ticket_id).fee, Decimal(7))
 
     def test_unknown_and_closed_ticket(self):
         with self.assertRaises(ValueError):

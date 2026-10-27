@@ -4,7 +4,7 @@ CREATE TABLE employees (
     emp_id integer PRIMARY KEY, emp_name text NOT NULL,
     dept_id integer NOT NULL REFERENCES departments,
     salary numeric(12,2) NOT NULL CHECK (salary >= 0),
-    manager_id integer REFERENCES employees
+    manager_id integer REFERENCES employees CHECK (manager_id IS NULL OR manager_id <> emp_id)
 );
 CREATE TABLE projects (
     project_id integer PRIMARY KEY, project_name text NOT NULL,

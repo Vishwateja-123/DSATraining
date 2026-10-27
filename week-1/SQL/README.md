@@ -20,7 +20,7 @@ Use PostgreSQL with `psql` on PATH and a database where you can create a tempora
 ```bash
 createdb qn_week1
 psql -X -v ON_ERROR_STOP=1 -d qn_week1 -f week-1/SQL/run_all.sql
-WEEK1_DATABASE_URL='dbname=qn_week1' python3 -m unittest discover -s week-1/SQL/tests -v
+PGDATABASE=qn_week1 python3 -m unittest discover -s week-1/SQL/tests -v
 ```
 
 Use your normal PostgreSQL authentication settings if your server requires host/user/password configuration. Do not commit passwords. `run_all.sql` creates `week1_demo` inside a transaction and rolls it back; it fails rather than overwriting an existing schema with that name. Tests use unique schemas and roll back every run. No permanent schema/table deletion is performed.
@@ -39,3 +39,5 @@ Use your normal PostgreSQL authentication settings if your server requires host/
 - Q10 returns all tied highest/lowest earners in nonempty departments, with deterministic name ordering.
 
 The schema is reconstructed from columns used in the reference, not an official assignment schema. [schema.sql](schema.sql), [seed.sql](seed.sql), [expected demo output](sample-output.txt) and [tests](tests/test_sql.py) make those choices reviewable.
+
+Connection settings use libpq environment variables: `PGDATABASE` is a database name, `PGHOST` a host/socket directory, and `PGPORT` a port. Alternatively use `PGSERVICE` with a local service file. Keep passwords in a permission-restricted `.pgpass` file; never put credentials in command arguments. The test runner hides connection diagnostics on failure.

@@ -1,5 +1,6 @@
 """Public service boundary; all state changes happen under one process lock."""
 from dataclasses import replace
+from copy import deepcopy
 from datetime import datetime, timezone
 from decimal import Decimal
 from threading import RLock
@@ -26,14 +27,14 @@ class ParkingLot:
         self._tickets = {}
         self._plates = {}
         self._ticket_pricing = {}
-        self._allocation = allocation or LowestFloor()
-        self._pricing = pricing or HourlyFee()
+        self._allocation = LowestFloor() if allocation is None else allocation
+        self._pricing = HourlyFee() if pricing is None else pricing
         self._clock = clock
         self._lock = RLock()
 
     def add_floor(self, number):
         with self._lock:
-            if not isinstance(number, int) or number < 1 or number in self._floors:
+            if type(number) is not int or number < 1 or number in self._floors:
                 raise ValueError("Floor must be positive and unique")
             self._floors[number] = ParkingFloor(number)
 
@@ -41,7 +42,7 @@ class ParkingLot:
         kind = VehicleType(kind.strip().upper())
         slot_id = slot_id.strip()
         with self._lock:
-            if floor not in self._floors:
+            if type(floor) is not int or floor not in self._floors:
                 raise ValueError("Unknown floor")
             slots = self._floors[floor].slots
             if not slot_id or slot_id in slots:
@@ -70,23 +71,35 @@ class ParkingLot:
         vehicle = Vehicle.create(plate, kind)
         entered_at = self._clock() if entered_at is None else entered_at
         check_time(entered_at)
+        entered_at = entered_at.astimezone(timezone.utc)
         with self._lock:
             if vehicle.plate in self._plates:
                 raise ValueError("Vehicle already parked")
-            slot = self._allocation.choose(self._available(vehicle.kind))
-            if slot is None:
+            available = self._available(vehicle.kind)
+            # Strategies see detached candidates, never mutable live occupancy.
+            candidates = [replace(slot) for slot in available]
+            selected = self._allocation.choose(candidates)
+            if selected is None:
                 raise ValueError("No compatible free slot")
+            position = next((i for i, candidate in enumerate(candidates)
+                             if candidate is selected), None)
+            if position is None or selected != available[position]:
+                raise ValueError("Allocation strategy returned an invalid slot")
+            slot = available[position]
+            # Snapshot before changing any state; strategies must be deepcopy-safe.
+            pricing = deepcopy(self._pricing)
             ticket_id = uuid4().hex
             ticket = Ticket(ticket_id, vehicle, slot.floor, slot.slot_id, entered_at)
             slot.ticket_id = ticket_id
             self._tickets[ticket_id] = ticket
             self._plates[vehicle.plate] = ticket_id
-            self._ticket_pricing[ticket_id] = self._pricing
+            self._ticket_pricing[ticket_id] = pricing
             return ticket
 
     def unpark(self, ticket_id, exited_at=None):
         exited_at = self._clock() if exited_at is None else exited_at
         check_time(exited_at)
+        exited_at = exited_at.astimezone(timezone.utc)
         with self._lock:
             ticket = self._tickets.get(ticket_id)
             if ticket is None or not ticket.active:

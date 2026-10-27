@@ -16,16 +16,16 @@ python3 -m unittest discover -s week-1/LLD/tests -v
 python3 week-1/LLD/demo.py
 ```
 
-Expected: 12 DSA tests and 11 LLD tests pass. The parking demo prints INR 60 for three hourly car hours and INR 65 for four tiered car hours, followed by rejected invalid operations and occupancy.
+Expected: 13 DSA tests and 15 LLD tests pass. The parking demo prints INR 60 for three hourly car hours and INR 65 for four tiered car hours, followed by rejected invalid operations and occupancy.
 
 With a dedicated PostgreSQL database available:
 
 ```bash
 psql -X -v ON_ERROR_STOP=1 -d qn_week1 -f week-1/SQL/run_all.sql
-WEEK1_DATABASE_URL='dbname=qn_week1' python3 -m unittest discover -s week-1/SQL/tests -v
+PGDATABASE=qn_week1 python3 -m unittest discover -s week-1/SQL/tests -v
 ```
 
-Expected: 11 SQL tests pass, including ten populated-query assertions and an empty-table check for all ten queries. Follow the SQL README for initial database setup.
+Expected: 13 SQL tests pass, including ten populated-query assertions and an empty-table check for all ten queries. Follow the SQL README for initial database setup.
 
 ## 3. Explain the work
 
@@ -50,6 +50,6 @@ Until merge, use the review branch links rather than claiming these new folders 
 
 ## 5. Reconcile the official tracker
 
-At the earlier live check, the DSA tab had PAIDIPELLY VISHWA TEJA / roll 2303A52389 at row 29, with DSA 7, SQL 7 and HLD/LLD/link blank. Re-find by roll number before any edit because rows may move.
+Find your own entry in the official tracker before editing; rows may move. Keep student identifiers and tracker progress details in the private tracker, not in this public repository.
 
 After reviewing this new work and confirming it satisfies the internship's criteria, proposed values are DSA **10**, SQL **10**, HLD **Completed**, LLD **Completed**, and the DSATraining weekly index link (which links to HLD). These are proposed updates, not a claim of teacher approval. Preserve existing values until this review is complete. Update only your own row; do not modify classmates' entries. The tracker has not been edited by this preparation step.

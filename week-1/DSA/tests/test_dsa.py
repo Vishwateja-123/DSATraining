@@ -16,6 +16,23 @@ def load(number):
 
 
 class DsaTests(unittest.TestCase):
+    def test_iterators_and_invalid_numeric_inputs(self):
+        self.assertEqual(load(3).merge_intervals(iter([[1, 3], [2, 4]])), [[1, 4]])
+        coins = load(9).min_coins_for_amount
+        self.assertEqual(coins(iter([1, 2, 5]), 11), 3)
+        for values, amount in [([True], 1), ([1], True), ([False, 2], 2)]:
+            with self.assertRaises(ValueError):
+                coins(values, amount)
+        tree = load(10).SegmentTreeRangeMax([2, 4])
+        for value in [0.5, True, "0", None]:
+            with self.assertRaises(IndexError):
+                tree.update(value, 9)
+            with self.assertRaises(IndexError):
+                tree.query(value, 1)
+            with self.assertRaises(IndexError):
+                tree.query(0, value)
+        self.assertEqual(tree.query(0, 1), 4)
+
     def test_longest_subarray_exhaustive(self):
         m = load(1)
         for n in range(6):
