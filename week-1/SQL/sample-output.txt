@@ -1,0 +1,100 @@
+BEGIN
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 5
+INSERT 0 9
+INSERT 0 3
+INSERT 0 5
+INSERT 0 12
+01_department_salary_summary.sql
+ dept_id |  dept_name  | employee_count | avg_salary | min_salary | max_salary
+---------+-------------+----------------+------------+------------+------------
+       1 | Engineering |              4 |      75.00 |      40.00 |     100.00
+       2 | HR          |              2 |      60.00 |      60.00 |      60.00
+       3 | Empty       |              0 |            |            |
+       4 | Sales       |              2 |      60.00 |      30.00 |      90.00
+       5 | Support     |              1 |      50.00 |      50.00 |      50.00
+(5 rows)
+
+02_second_highest_salary.sql
+ emp_id | emp_name | dept_id | salary
+--------+----------+---------+--------
+      2 | Bala     |       1 |  80.00
+      3 | Chitra   |       1 |  80.00
+      8 | Hari     |       4 |  30.00
+(3 rows)
+
+03_above_department_average.sql
+ emp_id | emp_name | dept_id | salary | dept_avg_salary
+--------+----------+---------+--------+-----------------
+      1 | Asha     |       1 | 100.00 |           75.00
+      2 | Bala     |       1 |  80.00 |           75.00
+      3 | Chitra   |       1 |  80.00 |           75.00
+      7 | Gita     |       4 |  90.00 |           60.00
+(4 rows)
+
+04_manager_team_salary.sql
+ manager_id | manager_name | direct_report_count | total_team_salary | manager_salary
+------------+--------------+---------------------+-------------------+----------------
+          1 | Asha         |                   3 |            200.00 |         100.00
+(1 row)
+
+05_top_project_contributors.sql
+ project_id | project_name | emp_id | emp_name | hours_worked | contributor_rank
+------------+--------------+--------+----------+--------------+------------------
+          1 | Judge        |      2 | Bala     |        20.00 |                1
+          1 | Judge        |      3 | Chitra   |        20.00 |                1
+          1 | Judge        |      1 | Asha     |        10.00 |                2
+          2 | Dashboard    |      1 | Asha     |         0.00 |                1
+(4 rows)
+
+06_departments_without_projects.sql
+ dept_id | dept_name
+---------+-----------
+       2 | HR
+       5 | Support
+(2 rows)
+
+07_running_order_revenue.sql
+ order_date | daily_revenue | cumulative_revenue
+------------+---------------+--------------------
+ 2025-11-01 |      10000.00 |           10000.00
+ 2025-11-02 |          1.00 |           10001.00
+ 2025-12-01 |       5000.00 |           15001.00
+ 2026-01-01 |      55000.00 |           70001.00
+ 2026-01-02 |     100001.00 |          170002.00
+(5 rows)
+
+08_customer_order_classification.sql
+ customer_id | total_completed_value | customer_tier
+-------------+-----------------------+---------------
+         103 |             100000.00 | PLATINUM
+         102 |              50000.00 | GOLD
+         101 |              20000.00 | SILVER
+         105 |                  2.00 | BRONZE
+         104 |                     0 | BRONZE
+         106 |                     0 | BRONZE
+(6 rows)
+
+09_consecutive_monthly_orders.sql
+ customer_id
+-------------
+         101
+         106
+(2 rows)
+
+10_salary_gap_analysis.sql
+ dept_id |  dept_name  | highest_paid_employees | highest_salary | lowest_paid_employees | lowest_salary | salary_difference
+---------+-------------+------------------------+----------------+-----------------------+---------------+-------------------
+       1 | Engineering | Asha                   |         100.00 | Dev                   |         40.00 |             60.00
+       2 | HR          | Esha, Farah            |          60.00 | Esha, Farah           |         60.00 |              0.00
+       4 | Sales       | Gita                   |          90.00 | Hari                  |         30.00 |             60.00
+       5 | Support     | Ira                    |          50.00 | Ira                   |         50.00 |              0.00
+(4 rows)
+
+ROLLBACK
